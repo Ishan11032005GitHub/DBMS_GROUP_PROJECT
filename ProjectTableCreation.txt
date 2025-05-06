@@ -1,0 +1,79 @@
+-- Customers Table
+CREATE TABLE Customers (
+    CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+    CustomerName VARCHAR(100) NOT NULL,
+    EmailID VARCHAR(100) UNIQUE,
+    PhoneNo VARCHAR(20),
+    Address TEXT,
+    Country VARCHAR(50)
+);
+
+-- Employees Table
+CREATE TABLE Employees (
+    EmployeeID INT AUTO_INCREMENT PRIMARY KEY,
+    EmployeeName VARCHAR(100) NOT NULL,
+    EmailID VARCHAR(100) UNIQUE,
+    PhoneNo VARCHAR(20),
+    Salary DECIMAL(10,2),
+    Gender ENUM('Male', 'Female', 'Other')
+);
+
+-- Suppliers Table
+CREATE TABLE Suppliers (
+    SupplierID INT AUTO_INCREMENT PRIMARY KEY,
+    SupplierName VARCHAR(100) NOT NULL,
+    PhoneNo VARCHAR(20),
+    EmailID VARCHAR(100) UNIQUE,
+    Address TEXT,
+    Country VARCHAR(50)
+);
+
+-- Products Table
+CREATE TABLE Products (
+    ProductID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductName VARCHAR(100) NOT NULL,
+    SupplierID INT,
+    Description TEXT,
+    UnitPrice DECIMAL(10,2),
+    FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
+);
+
+-- Purchases Table
+CREATE TABLE Purchases (
+    PurchaseID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductID INT,
+    TotalAmount DECIMAL(10,2),
+    Status ENUM('Completed', 'Pending', 'Canceled') DEFAULT 'Pending',
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
+
+-- Available Stocks Table
+CREATE TABLE AvailableStocks (
+    StockID INT AUTO_INCREMENT PRIMARY KEY,
+    PurchaseID INT,
+    Quantity INT NOT NULL DEFAULT 0,
+    FOREIGN KEY (PurchaseID) REFERENCES Purchases(PurchaseID)
+);
+
+-- Sales Table
+CREATE TABLE Sales (
+    PurchaseItemID INT AUTO_INCREMENT PRIMARY KEY,
+    PurchaseID INT,
+    ProductID INT,
+    CustomerID INT,
+    Quantity INT NOT NULL,
+    UnitCost DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (PurchaseID) REFERENCES Purchases(PurchaseID),
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- Returns Table
+CREATE TABLE Returns (
+    ReturnID INT AUTO_INCREMENT PRIMARY KEY,
+    ProductID INT,
+    ReturnDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Reason TEXT,
+    Status ENUM('Approved', 'Pending', 'Rejected') DEFAULT 'Pending',
+    FOREIGN KEY (ProductID) REFERENCES Products(ProductID)
+);
